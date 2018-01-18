@@ -6,4 +6,4 @@ channel
 
 //
 $> go run main.go serve
-$> go run main.go conn
+$> navigate to http://localhost:3000/ multiple times, and each window can talk to all the other

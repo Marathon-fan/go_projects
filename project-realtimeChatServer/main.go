@@ -1,58 +1,22 @@
 package main
 
 import (
-	"bufio"
-	"io"
+	"./lib"
+	"html/template"
 	"log"
-	"net"
-	"os"
-	"time"
+	"net/http"
 )
 
-func serve() {
-	ln, err := net.Listen("tcp", ":8000")
-	if err != nil {
-		panic(err)
-	}
-	defer ln.Close()
-	log.Println("Listening on port 8000...")
+var index = template.Must(template.ParseFiles("./index.html"))
 
-	for {
-		conn, err := ln.Accept()
-		if err != nil {
-			log.Println(err)
-		}
-		go handleConn(conn)
-	}
-
-}
-
-func handleConn(conn net.Conn) {
-	input := bufio.NewScanner(conn)
-	for input.Scan() {
-		time.Sleep(1 * time.Second)
-		conn.Write([]byte("\t" + input.Text() + "\n"))
-	}
-	conn.Close()
-}
-
-func conn() {
-	c, err := net.Dial("tcp", ":8000")
-	if err != nil {
-		log.Println("Failed to connect: ", err)
-	}
-	go io.Copy(c, os.Stdin)
-	io.Copy(os.Stdout, c)
+func home(w http.ResponseWriter, r *http.Request) {
+	index.Execute(w, nil)
 }
 
 func main() {
-	switch os.Args[1] {
-	case "serve":
-		serve()
-	case "conn":
-		conn()
-	default:
-		log.Println("Broken")
+	go chat.DefaultHub.Start()
 
-	}
+	http.HandleFunc("/", home)
+	http.HandleFunc("/ws", chat.WSHandler)
+	log.Fatal(http.ListenAndServe(":3000", nil))
 }
