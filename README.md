@@ -17,4 +17,7 @@ step3 navigate to http://localhost:3000/ multiple times, and you will see that e
 ### 42futureDesignPattern  
 this demo demonstrates how to use future pattern of go lang  
 
+## project-go-asynchronousProgramming   
+how to use goRoutines and channels   
+
 
